@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use App\Models\User;
 
-
 class Todo extends Model
 {
     use HasFactory;
