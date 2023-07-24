@@ -1,23 +1,20 @@
 <template>
-  <v-app>
-    <v-main>
-      <HelloWorld/>
-    </v-main>
-  </v-app>
+  <div>
+    <v-app>
+      <v-main>
+        <v-container>
+          <router-link to="/login">Login</router-link>
+          <router-link to="/register">Register</router-link>
+          <router-link to="/todos">Todo List</router-link>
+          <router-view></router-view>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
   name: 'App',
-
-  components: {
-    HelloWorld,
-  },
-
-  data: () => ({
-    //
-  }),
-}
+};
 </script>
