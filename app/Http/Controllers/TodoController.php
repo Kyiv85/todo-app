@@ -7,18 +7,20 @@ use App\Models\Todo;
 
 use Illuminate\Support\Facades\Auth;
 
+use Exception;
+
 class TodoController extends Controller
 {
     // Method for listing todos
     public function index()
     {
         $user = Auth::user();
-        $todos = $user->todos;
+        $todos = Todo::where('user_id', $user->id)->get();
 
         return response()->json(['todos' => $todos], 200);
     }
 
-    // Method for creating a todo
+    // Method for create a todo
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -26,15 +28,19 @@ class TodoController extends Controller
         $this->validate($request, [
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-            'completed' => 'boolean',
         ]);
 
-        $todo = Todo::create([
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'completed' => $request->input('completed', false),
-            'user_id' => $user->id,
-        ]);
+        try {
+            $todo = Todo::create([
+                'title' => $request->input('title'),
+                'description' => $request->input('description'),
+                'completed' => $request->input('completed', false),
+                'user_id' => $user->id,
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error creating the information'], 401);
+            error_log($e->getMessage());
+        }
 
         return response()->json(['todo' => $todo], 201);
     }
@@ -56,7 +62,12 @@ class TodoController extends Controller
             'completed' => 'boolean',
         ]);
 
-        $todo->update($request->all());
+        try {
+            $todo->update($request->all());
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error updating the information'], 401);
+            error_log($e->getMessage());
+        }
 
         return response()->json(['todo' => $todo], 200);
     }
@@ -71,7 +82,12 @@ class TodoController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $todo->delete();
+        try {
+            $todo->delete();
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Error deleting the information'], 401);
+            error_log($e->getMessage());
+        }
 
         return response()->json(['message' => 'Todo deleted successfully'], 200);
     }
