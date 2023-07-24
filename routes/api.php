@@ -26,11 +26,10 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
 
-//Get All todos
-Route::get('/todos', [TodoController::class, 'index']);
-
 //Authentication
 Route::middleware('auth:sanctum')->group(function () {
+    //Get All todos
+    Route::get('/todos', [TodoController::class, 'index']);
 
     //Create a ToDo
     Route::post('/todos', [TodoController::class, 'store']);

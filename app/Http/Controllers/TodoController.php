@@ -18,7 +18,7 @@ class TodoController extends Controller
         return response()->json(['todos' => $todos], 200);
     }
 
-    // Method for creating a todos
+    // Method for creating a todo
     public function store(Request $request)
     {
         $user = Auth::user();
