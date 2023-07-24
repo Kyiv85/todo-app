@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 
 use Exception;
 
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
 class TodoController extends Controller
 {
     // Method for listing todos
@@ -25,10 +28,16 @@ class TodoController extends Controller
     {
         $user = Auth::user();
 
-        $this->validate($request, [
+        //Validate info
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'description' => 'required|string|max:255',
         ]);
+
+        //Check validations
+        if ($validator->fails()) {
+            throw new HttpResponseException(response()->json(['errors' => $validator->errors()], 422));
+        }
 
         try {
             $todo = Todo::create([
@@ -46,7 +55,7 @@ class TodoController extends Controller
     }
 
     // Method for update a todo
-    public function update(Request $request, $id)
+    public function update(Request $request, String $id)
     {
         $user = Auth::user();
         $todo = Todo::findOrFail($id);
@@ -56,11 +65,17 @@ class TodoController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        $this->validate($request, [
-            'title' => 'required|string|max:255',
-            'description' => $request->input('description'),
+        //Validate info
+        $validator = Validator::make($request->all(), [
+            'title' => 'string|max:255',
+            'description' => 'string|max:255',
             'completed' => 'boolean',
         ]);
+
+        //Check validations
+        if ($validator->fails()) {
+            throw new HttpResponseException(response()->json(['errors' => $validator->errors()], 422));
+        }
 
         try {
             $todo->update($request->all());
